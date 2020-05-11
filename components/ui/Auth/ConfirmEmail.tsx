@@ -6,11 +6,12 @@ import Container from '@material-ui/core/Container'
 import { connect } from 'react-redux'
 import { bindActionCreators, Dispatch } from 'redux'
 import {
-  resendVerificationEmail,
+  resendVerificationEmail
 } from '../../../redux/auth/service'
 import { selectAuthState } from '../../../redux/auth/selector'
 import './auth.scss'
 import EmptyLayout from '../Layout/EmptyLayout'
+import { AuthUser } from 'interfaces/AuthUser'
 
 interface Props {
   auth: any,
@@ -19,7 +20,7 @@ interface Props {
 
 const mapStateToProps = (state: any) => {
   return {
-    auth: selectAuthState(state),
+    auth: selectAuthState(state)
   }
 }
 
@@ -31,8 +32,8 @@ class ConfirmEmail extends React.Component<Props> {
   handleResendEmail = (e: any) => {
     e.preventDefault()
 
-    const user = this.props.auth.get("user");
-    this.props.resendVerificationEmail(user.token)
+    const authUser = this.props.auth.get('authUser') as AuthUser
+    this.props.resendVerificationEmail(authUser.identityProvider.token)
   }
 
   render() {
@@ -47,7 +48,7 @@ class ConfirmEmail extends React.Component<Props> {
             <Box mt={3}>
               <Typography variant="body2" color="textSecondary" align="center">
                 Please check your email to verify your account.
-                If you didn't get an email, please click 
+                If you didn&apos;t get an email, please click
                 <Button onClick={(e) => this.handleResendEmail(e)}>here</Button> to resend the verification email.
               </Typography>
             </Box>

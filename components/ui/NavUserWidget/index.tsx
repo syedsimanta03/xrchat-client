@@ -9,6 +9,8 @@ import Avatar from '@material-ui/core/Avatar'
 import { showDialog } from '../../../redux/dialog/service'
 
 import './style.scss'
+import { User } from 'interfaces/User'
+import { AuthUser } from 'interfaces/AuthUser'
 // Get auth state from redux
 // Get user email address
 // If not logged in, show login
@@ -48,18 +50,19 @@ class NavUserBadge extends Component<Props> {
 
   render() {
     const isLoggedIn = this.props.auth.get('isLoggedIn')
-    const user = this.props.auth.get('user')
+    const user = this.props.auth.get('user') as User
+    const authUser = this.props.auth.get('authUser') as AuthUser
     const userName =
-      user && user.user ? user.user.name ?? user.user.token : 'User'
+      authUser && authUser.identityProvider ? authUser.identityProvider.token : 'User'
     const avatarLetter = userName ? userName.substr(0, 1) : 'X'
 
     return (
       <div className="userWidget">
         {isLoggedIn && (
           <div className="flex">
-            <Button onClick={() => this.handleLogout()} 
+            <Button onClick={() => this.handleLogout()}
               style={this.styles.logoutButton}
-              >
+            >
               {userName}
               <br />
               Logout
@@ -72,14 +75,14 @@ class NavUserBadge extends Component<Props> {
           </div>
         )}
         {!isLoggedIn && (
-          <Button 
+          <Button
             style={this.styles.loginButton}
             onClick={() => this.props.showDialog({
               children: (
                 <SignIn />
               )
             })}
-            >
+          >
             Log In
           </Button>
         )
