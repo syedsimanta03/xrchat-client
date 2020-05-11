@@ -23,7 +23,7 @@ import {
   LOADED_USER_DATA
 } from '../actions'
 import { getStoredState } from '../persisted.store'
-import { resolveUser } from 'interfaces/User'
+import { resolveUser } from '../../interfaces/User'
 // import { getStoredState } from '../persisted.store'
 
 export const initialState: AuthState = {
@@ -59,10 +59,10 @@ const authReducer = (state = immutableState, action: AuthAction): any => {
     case REGISTER_USER_BY_EMAIL_ERROR:
       break
     case LOGOUT_USER:
-      console.log('logout-------------')
       return state
         .set('isLoggedIn', false)
         .set('user', undefined)
+        .set('authUser', undefined)
     case DID_VERIFY_EMAIL:
       return state
         .set('isVerified', (action as AuthResultAction).result)
