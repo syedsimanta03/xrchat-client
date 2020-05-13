@@ -15,6 +15,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import theme from '../components/assets/theme'
 import { restoreState } from '../redux/persisted.store'
 import { doLoginAuto } from '../redux/auth/service'
+import { initGA, logPageView } from "../components/analytics"
 
 import getConfig from 'next/config'
 
@@ -51,11 +52,14 @@ interface Props extends AppProps {
 
 class MyApp extends App<Props> {
   componentDidMount() {
+    let window:any;
     const jssStyles = document.querySelector('#jss-server-side')
     if (jssStyles && jssStyles.parentNode) {
       jssStyles.parentNode.removeChild(jssStyles)
     }
-
+    initGA()
+     
+    logPageView()
     this.props.store.dispatch(restoreState())
     doLoginAuto(this.props.store.dispatch)
   }

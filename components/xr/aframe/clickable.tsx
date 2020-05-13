@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 // eslint-disable-next-line no-unused-vars
-=======
->>>>>>> 6ef65fdb8339051a44c7f7191d04b0a566dccd01
 import AFRAME from 'aframe'
 
 export const ComponentName = 'clickable'
