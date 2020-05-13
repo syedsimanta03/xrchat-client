@@ -106,7 +106,7 @@ export const VideoDetailsComponent: AFRAME.ComponentDefinition<VideoDetailsProps
     const textEntity = document.createElement('a-entity')
 
     textEntity.setAttribute('text', {
-      font: 'mozillavr',
+      font: 'roboto',
       width: width,
       align: 'center',
       baseline: 'center',
@@ -119,7 +119,7 @@ export const VideoDetailsComponent: AFRAME.ComponentDefinition<VideoDetailsProps
   },
 
   createDetailEntity() {
-    var text = this.data.title + '\n\n'
+    let text = this.data.title + '\n\n'
     text += this.data.description ? this.data.description + '\n' : ''
     text += this.data.runtime ? this.data.runtime + '\n' : ''
     text += this.data.productionCredit ? this.data.productionCredit + '\n' : ''
@@ -128,7 +128,7 @@ export const VideoDetailsComponent: AFRAME.ComponentDefinition<VideoDetailsProps
 
     const textEntity = this.createText(text, 2)
 
-    const textBG = this.createBackground(1, 0.75, 'black', 0, -0.0625, -0.01)
+    const textBG = this.createBackground(this.data.cellWidth, this.data.cellContentHeight * 1.5, 'black', 0, -0.0625, -0.01)
 
     textEntity.appendChild(textBG)
 
@@ -151,7 +151,7 @@ export const VideoDetailsComponent: AFRAME.ComponentDefinition<VideoDetailsProps
     const textEntity = this.createText(text, width)
     textEntity.object3D.position.set(xoffset, yoffset, zoffset)
 
-    const textBG = this.createBackground(bgWidth, bgHeight, bgColor, 0, -bgHeight / 2, bgZoffset)
+    const textBG = this.createBackground(bgWidth, bgHeight, bgColor, 0, 0, bgZoffset) // - bgHeight / 2
     textBG.classList.add('clickable')
     textBG.setAttribute('clickable', { clickevent: clickevent })
 
@@ -161,11 +161,15 @@ export const VideoDetailsComponent: AFRAME.ComponentDefinition<VideoDetailsProps
   },
 
   createWatchButton() {
-    return this.createButton('watch', 'green', 'watchbutton', 2, -0.25, -0.5, 0, 0.5, 0.125, -0.01)
+    return this.createButton('watch', 'green', 'watchbutton', this.data.cellWidth * 2,
+      -this.data.cellWidth / 4, -this.data.cellContentHeight, 0,
+      this.data.cellWidth / 2, this.data.cellContentHeight / 4, -0.01)
   },
 
   createBackButton() {
-    return this.createButton('back', 'red', 'backbutton', 2, 0.25, -0.5, 0, 0.5, 0.125, -0.01)
+    return this.createButton('back', 'red', 'backbutton', this.data.cellWidth * 2,
+      this.data.cellWidth / 4, -this.data.cellContentHeight, 0,
+      this.data.cellWidth / 2, this.data.cellContentHeight / 4, -0.01)
   }
 
 }

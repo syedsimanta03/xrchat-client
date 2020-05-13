@@ -75,7 +75,7 @@ class ProfileConnections extends React.Component<Props> {
   }
 }
 
-function ProfileConnectionsWrapper(props: any) {
+const ProfileConnectionsWrapper = (props: any) => {
   const classes = useStyles()
 
   return (

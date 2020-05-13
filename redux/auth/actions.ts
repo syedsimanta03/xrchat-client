@@ -14,6 +14,7 @@ import {
   DID_RESET_PASSWORD,
   ACTION_PROCESSING,
   DID_CREATE_MAGICLINK,
+  UPDATE_USER_SETTINGS,
   LOADED_USER_DATA
 } from '../actions'
 import { AuthUser } from '../../interfaces/AuthUser'
@@ -21,86 +22,86 @@ import { User } from '../../interfaces/User'
 import { IdentityProvider } from '../../interfaces/IdentityProvider'
 
 export interface AuthState {
-    isLoggedIn: boolean
-    isProcessing: boolean
+  isLoggedIn: boolean
+  isProcessing: boolean
 
-    error: string
+  error: string
 
-    authUser?: AuthUser
-    user?: User
-    identityProvider?: IdentityProvider
+  authUser?: AuthUser
+  user?: User
+  identityProvider?: IdentityProvider
 }
 
 export interface EmailLoginForm {
-    email: string
-    password: string
+  email: string
+  password: string
 }
 
 export interface EmailRegistrationForm {
-    email: string
-    password: string
+  email: string
+  password: string
 }
 
 export interface GithubLoginForm {
-    email: string
+  email: string
 }
 
 export interface AuthProcessingAction {
-    type: string
-    processing: boolean
+  type: string
+  processing: boolean
 }
 
 export interface AddConnectionProcessingAction {
-    type: string
-    processing: boolean
-    userId: string
+  type: string
+  processing: boolean
+  userId: string
 }
 
 export interface LoginResultAction {
-    type: string
-    authUser?: AuthUser
-    message: string
+  type: string
+  authUser?: AuthUser
+  message: string
 }
 
 export interface RegistrationResultAction {
-    type: string
-    identityProvider?: IdentityProvider
-    message: string
+  type: string
+  identityProvider?: IdentityProvider
+  message: string
 }
 
 export interface AuthResultAction {
-    type: string
-    result: boolean
+  type: string
+  result: boolean
 }
 
 export interface AddConnectionResultAction {
-    type: string
-    user?: any
-    message?: string
+  type: string
+  user?: any
+  message?: string
 }
 
 export interface LoadDataResultAction {
-    type: string
-    user?: User
+  type: string
+  user?: User
 }
 
 export type AuthAction =
-    AuthProcessingAction
-    | LoginResultAction
-    | RegistrationResultAction
-    | AuthResultAction
-    | AddConnectionResultAction
-    | AddConnectionProcessingAction
-    | LoadDataResultAction
+  AuthProcessingAction
+  | LoginResultAction
+  | RegistrationResultAction
+  | AuthResultAction
+  | AddConnectionResultAction
+  | AddConnectionProcessingAction
+  | LoadDataResultAction
 
-export function actionProcessing(processing: boolean): AuthProcessingAction {
+export function actionProcessing (processing: boolean): AuthProcessingAction {
   return {
     type: ACTION_PROCESSING,
     processing
   }
 }
 
-export function loginUserSuccess(authUser: AuthUser): LoginResultAction {
+export function loginUserSuccess (authUser: AuthUser): LoginResultAction {
   return {
     type: LOGIN_USER_SUCCESS,
     authUser,
@@ -108,35 +109,35 @@ export function loginUserSuccess(authUser: AuthUser): LoginResultAction {
   }
 }
 
-export function loginUserError(err: string): LoginResultAction {
+export function loginUserError (err: string): LoginResultAction {
   return {
     type: LOGIN_USER_ERROR,
     message: err
   }
 }
 
-export function loginUserByGithubSuccess(message: string): LoginResultAction {
+export function loginUserByGithubSuccess (message: string): LoginResultAction {
   return {
     type: LOGIN_USER_BY_GITHUB_SUCCESS,
     message
   }
 }
 
-export function loginUserByGithubError(message: string): LoginResultAction {
+export function loginUserByGithubError (message: string): LoginResultAction {
   return {
     type: LOGIN_USER_BY_GITHUB_ERROR,
     message
   }
 }
 
-export function didLogout(): LoginResultAction {
+export function didLogout (): LoginResultAction {
   return {
     type: LOGOUT_USER,
     message: ''
   }
 }
 
-export function registerUserByEmailSuccess(identityProvider: IdentityProvider): RegistrationResultAction {
+export function registerUserByEmailSuccess (identityProvider: IdentityProvider): RegistrationResultAction {
   return {
     type: REGISTER_USER_BY_EMAIL_SUCCESS,
     identityProvider,
@@ -144,51 +145,57 @@ export function registerUserByEmailSuccess(identityProvider: IdentityProvider): 
   }
 }
 
-export function registerUserByEmailError(message: string): RegistrationResultAction {
+export function registerUserByEmailError (message: string): RegistrationResultAction {
   return {
     type: REGISTER_USER_BY_EMAIL_ERROR,
     message: message
   }
 }
 
-export function didVerifyEmail(result: boolean): AuthResultAction {
+export function didVerifyEmail (result: boolean): AuthResultAction {
   return {
     type: DID_VERIFY_EMAIL,
     result
   }
 }
 
-export function didResendVerificationEmail(result: boolean): AuthResultAction {
+export function didResendVerificationEmail (result: boolean): AuthResultAction {
   return {
     type: DID_RESEND_VERIFICATION_EMAIL,
     result
   }
 }
 
-export function didForgotPassword(result: boolean): AuthResultAction {
+export function didForgotPassword (result: boolean): AuthResultAction {
   return {
     type: DID_FORGOT_PASSWORD,
     result
   }
 }
 
-export function didResetPassword(result: boolean): AuthResultAction {
+export function didResetPassword (result: boolean): AuthResultAction {
   return {
     type: DID_RESET_PASSWORD,
     result
   }
 }
 
-export function didCreateMagicLink(result: boolean): AuthResultAction {
+export function didCreateMagicLink (result: boolean): AuthResultAction {
   return {
     type: DID_CREATE_MAGICLINK,
     result
   }
 }
 
-export function loadedUserData(user: User): LoadDataResultAction {
+export function loadedUserData (user: User): LoadDataResultAction {
   return {
     type: LOADED_USER_DATA,
     user
+  }
+}
+export function updateSettings (message: any): RegistrationResultAction {
+  return {
+    type: UPDATE_USER_SETTINGS,
+    message
   }
 }
