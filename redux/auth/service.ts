@@ -31,7 +31,7 @@ const { publicRuntimeConfig } = getConfig()
 const apiServer: string = publicRuntimeConfig.apiServer
 const authConfig = publicRuntimeConfig.auth
 
-export async function doLoginAuto (dispatch: Dispatch) {
+export async function doLoginAuto(dispatch: Dispatch) {
   const authData = getStoredState('auth')
   const accessToken = authData && authData.authUser ? authData.authUser.accessToken : undefined
 
@@ -64,7 +64,7 @@ export async function doLoginAuto (dispatch: Dispatch) {
     })
 }
 
-export function loadUserData (dispatch: Dispatch, userId: string) {
+export function loadUserData(dispatch: Dispatch, userId: string) {
   client.service('user').get(userId)
     .then((res: any) => {
       const user = resolveUser(res)
@@ -76,7 +76,7 @@ export function loadUserData (dispatch: Dispatch, userId: string) {
     })
 }
 
-export function loginUserByPassword (form: EmailLoginForm) {
+export function loginUserByPassword(form: EmailLoginForm) {
   return (dispatch: Dispatch) => {
     // check email validation.
     if (!validateEmail(form.email)) {
@@ -118,21 +118,21 @@ export function loginUserByPassword (form: EmailLoginForm) {
   }
 }
 
-export function loginUserByGithub () {
+export function loginUserByGithub() {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
     window.location.href = `${apiServer}/oauth/github`
   }
 }
 
-export function loginUserByGoogle () {
+export function loginUserByGoogle() {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
     window.location.href = `${apiServer}/oauth/google`
   }
 }
 
-export function loginUserByFacebook () {
+export function loginUserByFacebook() {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
 
@@ -140,7 +140,7 @@ export function loginUserByFacebook () {
   }
 }
 
-export function loginUserByJwt (accessToken: string, redirectSuccess: string, redirectError: string): any {
+export function loginUserByJwt(accessToken: string, redirectSuccess: string, redirectError: string): any {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
 
@@ -165,7 +165,7 @@ export function loginUserByJwt (accessToken: string, redirectSuccess: string, re
   }
 }
 
-export function logoutUser () {
+export function logoutUser() {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
     client.logout()
@@ -175,14 +175,14 @@ export function logoutUser () {
   }
 }
 
-export function registerUserByEmail (form: EmailRegistrationForm) {
+export function registerUserByEmail(form: EmailRegistrationForm) {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
 
     client.service('identity-provider').create({
       token: form.email,
       password: form.password,
-      type: 'password'
+      identityProviderType: 'password'
     })
       .then((identityProvider: any) => {
         window.location.href = '/auth/confirm'
@@ -197,7 +197,7 @@ export function registerUserByEmail (form: EmailRegistrationForm) {
   }
 }
 
-export function verifyEmail (token: string) {
+export function verifyEmail(token: string) {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
 
@@ -218,16 +218,14 @@ export function verifyEmail (token: string) {
   }
 }
 
-export function resendVerificationEmail (email: string) {
+export function resendVerificationEmail(email: string) {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
 
     client.service('authManagement').create({
       action: 'resendVerifySignup',
-      value: {
-        token: email,
-        type: 'password'
-      }
+      token: email,
+      identityProviderType: 'password'
     })
       .then(() => dispatch(didResendVerificationEmail(true)))
       .catch(() => dispatch(didResendVerificationEmail(false)))
@@ -235,16 +233,14 @@ export function resendVerificationEmail (email: string) {
   }
 }
 
-export function forgotPassword (email: string) {
+export function forgotPassword(email: string) {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
 
     client.service('authManagement').create({
       action: 'sendResetPwd',
-      value: {
-        token: email,
-        type: 'password'
-      }
+      token: email,
+      identityProviderType: 'password'
     })
       .then(() => dispatch(didForgotPassword(true)))
       .catch(() => dispatch(didForgotPassword(false)))
@@ -252,7 +248,7 @@ export function forgotPassword (email: string) {
   }
 }
 
-export function resetPassword (token: string, password: string) {
+export function resetPassword(token: string, password: string) {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
 
@@ -274,20 +270,20 @@ export function resetPassword (token: string, password: string) {
   }
 }
 
-export function createMagicLink (emailPhone: string, linkType?: 'email' | 'sms') {
+export function createMagicLink(emailPhone: string, linkType?: 'email' | 'sms') {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
 
-    let type = 'email'
+    let identityProviderType = 'email'
     let paramName = 'email'
     const enableEmailMagicLink = (authConfig && authConfig.enableEmailMagicLink) ?? true
     const enableSmsMagicLink = (authConfig && authConfig.enableSmsMagicLink) ?? false
 
     if (linkType === 'email') {
-      type = 'email'
+      identityProviderType = 'email'
       paramName = 'email'
     } else if (linkType === 'sms') {
-      type = 'sms'
+      identityProviderType = 'sms'
       paramName = 'mobile'
     } else {
       if (validatePhoneNumber(emailPhone)) {
@@ -296,7 +292,7 @@ export function createMagicLink (emailPhone: string, linkType?: 'email' | 'sms')
 
           return
         }
-        type = 'sms'
+        identityProviderType = 'sms'
         paramName = 'mobile'
       } else if (validateEmail(emailPhone)) {
         if (!enableEmailMagicLink) {
@@ -304,7 +300,7 @@ export function createMagicLink (emailPhone: string, linkType?: 'email' | 'sms')
 
           return
         }
-        type = 'email'
+        identityProviderType = 'email'
       } else {
         dispatchAlertError(dispatch, 'Please input valid email or phone number')
 
@@ -313,7 +309,7 @@ export function createMagicLink (emailPhone: string, linkType?: 'email' | 'sms')
     }
 
     client.service('magiclink').create({
-      type,
+      identityProviderType,
       [paramName]: emailPhone
     })
       .then((res: any) => {
@@ -330,14 +326,14 @@ export function createMagicLink (emailPhone: string, linkType?: 'email' | 'sms')
   }
 }
 
-export function addConnectionByPassword (form: EmailLoginForm, userId: string) {
+export function addConnectionByPassword(form: EmailLoginForm, userId: string) {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
 
     client.service('identity-provider').create({
       token: form.email,
       password: form.password,
-      type: 'password',
+      identityProviderType: 'password',
       userId
     })
       .then((res: any) => {
@@ -352,13 +348,13 @@ export function addConnectionByPassword (form: EmailLoginForm, userId: string) {
   }
 }
 
-export function addConnectionByEmail (email: string, userId: string) {
+export function addConnectionByEmail(email: string, userId: string) {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
 
     client.service('magiclink').create({
       email,
-      type: 'email',
+      identityProviderType: 'email',
       userId
     })
       .then((res: any) => {
@@ -373,13 +369,13 @@ export function addConnectionByEmail (email: string, userId: string) {
   }
 }
 
-export function addConnectionBySms (phone: string, userId: string) {
+export function addConnectionBySms(phone: string, userId: string) {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
 
     client.service('magiclink').create({
       mobile: phone,
-      type: 'sms',
+      identityProviderType: 'sms',
       userId
     })
       .then((res: any) => {
@@ -394,13 +390,13 @@ export function addConnectionBySms (phone: string, userId: string) {
   }
 }
 
-export function addConnectionByOauth (oauth: 'facebook' | 'google' | 'github', userId: string) {
+export function addConnectionByOauth(oauth: 'facebook' | 'google' | 'github', userId: string) {
   return (/* dispatch: Dispatch */) => {
     window.open(`${apiServer}/oauth/${oauth}?userId=${userId}`, '_blank')
   }
 }
 
-export function removeConnection (identityProviderId: number, userId: string) {
+export function removeConnection(identityProviderId: number, userId: string) {
   return (dispatch: Dispatch) => {
     dispatch(actionProcessing(true))
 
@@ -416,7 +412,7 @@ export function removeConnection (identityProviderId: number, userId: string) {
   }
 }
 
-export function refreshConnections (userId: string) { (dispatch: Dispatch) => loadUserData(dispatch, userId) }
+export function refreshConnections(userId: string) { (dispatch: Dispatch) => loadUserData(dispatch, userId) }
 
 export const updateUserSettings = (id: any, data: any) => async (dispatch: any) => {
   const res = await axiosRequest('PATCH', `${apiUrl}/user-settings/${id}`, data)

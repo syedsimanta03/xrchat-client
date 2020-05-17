@@ -105,7 +105,9 @@ const SignUp = (props: Props) => {
                   })
                 }
               >
+                <span>
                 Already have an account? Sign in
+                </span>
               </Link>
             </Grid>
           </Grid>
@@ -117,4 +119,4 @@ const SignUp = (props: Props) => {
 
 const SignUpWrapper = (props: any) => <SignUp {...props} />
 
-export default connect(mapDispatchToProps)(SignUpWrapper)
+export default connect(null, mapDispatchToProps)(SignUpWrapper)

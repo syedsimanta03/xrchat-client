@@ -73,4 +73,4 @@ const AuthMagicLinkWrapper = (props: any) => {
   return <AuthMagicLink {...props} router={router} />
 }
 
-export default connect(mapDispatchToProps)(AuthMagicLinkWrapper)
+export default connect(null, mapDispatchToProps)(AuthMagicLinkWrapper)

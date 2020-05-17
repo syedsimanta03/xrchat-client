@@ -155,7 +155,9 @@ export const PasswordLogin = (props: Props) => {
                     })
                   }
                 >
+                  <span>
                   Forgot password?
+                  </span>
                 </Link>
               )}
             </Grid>

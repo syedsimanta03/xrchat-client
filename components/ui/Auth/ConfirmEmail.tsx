@@ -8,7 +8,6 @@ import { resendVerificationEmail } from '../../../redux/auth/service'
 import { selectAuthState } from '../../../redux/auth/selector'
 import EmptyLayout from '../Layout/EmptyLayout'
 import { IdentityProvider } from '../../../interfaces/IdentityProvider'
-import { AuthUser } from '../../../interfaces/AuthUser'
 import './style.scss'
 
 const mapStateToProps = (state: any) => {
@@ -27,14 +26,10 @@ interface Props {
 }
 
 const ConfirmEmail = ({ auth, resendVerificationEmail }: Props) => {
-  const authUser = auth.get('authUser') as AuthUser
-
   const handleResendEmail = (e: any) => {
     e.preventDefault()
-
-    const identityProvider = this.props.auth.get('identityProvider') as IdentityProvider
-    console.log('---------', identityProvider)
-    this.props.resendVerificationEmail(identityProvider.token)
+    const identityProvider = auth.get('identityProvider') as IdentityProvider
+    resendVerificationEmail(identityProvider.token)
   }
 
   return (

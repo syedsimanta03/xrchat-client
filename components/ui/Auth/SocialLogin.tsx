@@ -115,4 +115,4 @@ const SocialLogin = (props: Props) => {
 
 const SocialLoginWrapper = (props: any) => <SocialLogin {...props} />
 
-export default connect(mapDispatchToProps)(SocialLoginWrapper)
+export default connect(null, mapDispatchToProps)(SocialLoginWrapper)

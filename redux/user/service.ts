@@ -6,15 +6,11 @@ import { User } from '../../interfaces/User'
 
 export function getUserRelationship(userId: string) {
   return (dispatch: Dispatch) => {
-    // dispatch(actionProcessing(true))
-
-    console.log('------get relations-------', userId)
     client.service('user-relationship').find({
       query: {
         userId
       }
     }).then((res: any) => {
-      console.log('relations------', res)
       dispatch(loadedUserRelationship(res as Relationship))
     })
       .catch((err: any) => {

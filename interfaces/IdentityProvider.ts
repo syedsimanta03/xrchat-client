@@ -1,7 +1,7 @@
 export type IdentityProvider = {
   id: number
   token: string
-  type: string
+  identityProviderType: string
   isVerified: boolean
   userId: string
 }
@@ -9,7 +9,7 @@ export type IdentityProvider = {
 export const IdentityProviderSeed: IdentityProvider = {
   id: 0,
   token: '',
-  type: '',
+  identityProviderType: '',
   isVerified: false,
   userId: ''
 }

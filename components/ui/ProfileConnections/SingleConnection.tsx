@@ -88,7 +88,7 @@ const SingleConnection = (props: Props) => {
     setState({
       ...state,
       identityProvider: user.identityProviders.find(
-        (v) => v.type === connectionType
+        (v) => v.identityProviderType === connectionType
       )
     })
   }, [])
@@ -140,7 +140,7 @@ const SingleConnection = (props: Props) => {
     actionBlock = (
       <Box display="flex">
         <Box p={1}>
-          <Link href="#" onClick={disconnect} className={classes.button}>
+          <Link onClick={disconnect} className={classes.button}>
             <Typography variant="h6">{identityProvider.token}</Typography>
             <Typography color="textSecondary" variant="body2">
               (disconnect)
@@ -159,7 +159,9 @@ const SingleConnection = (props: Props) => {
       <Box display="flex">
         <Box p={1}>
           <Link href="#" onClick={connect} className={classes.button}>
-            Connect
+            <span>
+              Connect
+            </span>
           </Link>
         </Box>
       </Box>

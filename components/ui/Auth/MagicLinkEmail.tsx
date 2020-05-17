@@ -14,7 +14,7 @@ import {
 import Grid from '@material-ui/core/Grid'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
-import NextLink from 'next/link'
+import Link from 'next/link'
 import getConfig from 'next/config'
 import './style.scss'
 import { User } from '../../../interfaces/User'
@@ -160,9 +160,11 @@ const MagicLinkEmail = (props: Props) => {
                 label={
                   <div>
                     I agree to the{' '}
-                    <NextLink href={termsOfService}>
+                    <Link href={termsOfService}>
+                      <span>
                       Terms &amp; Conditions
-                    </NextLink>
+                      </span>
+                    </Link>
                   </div>
                 }
               />
