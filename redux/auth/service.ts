@@ -405,8 +405,14 @@ export function removeConnection (identityProviderId: number, userId: string) {
     dispatch(actionProcessing(true))
 
     client.service('identity-provider').remove(identityProviderId)
-      .then(() => {
-        loadUserData(dispatch, userId)
+      .then((res: any) => {
+        if (res.removedUserId) {
+          client.logout()
+          window.location.href = '/'
+          dispatch(didLogout())
+        } else {
+          loadUserData(dispatch, userId)
+        }
       })
       .catch((err: any) => {
         console.log(err)

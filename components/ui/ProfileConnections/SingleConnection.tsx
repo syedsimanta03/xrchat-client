@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 interface Props {
-  auth: any,
+  authState: any,
   classes: any,
   connectionType: 'facebook' | 'github' | 'google' | 'email' | 'sms' | 'password',
 
@@ -57,7 +57,7 @@ interface Props {
 
 const mapStateToProps = (state: any) => {
   return {
-    auth: selectAuthState(state)
+    authState: selectAuthState(state)
   }
 }
 
@@ -78,13 +78,18 @@ class SingleConnection extends React.Component<Props> {
   }
 
   componentDidMount() {
-    const { auth, connectionType } = this.props
-    const user = auth.get('user') as User
-    if (!user) {
+  }
+
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps: any) {
+    const { authState } = nextProps
+    const user = authState.get('user') as User
+
+    if (!user || !user.identityProviders) {
       return
     }
 
-    const identityProvider = user.identityProviders.find((v) => v.type === connectionType)
+    const identityProvider = user.identityProviders.find((v) => v.type === this.props.connectionType)
     this.setState({
       identityProvider
     })
@@ -92,11 +97,11 @@ class SingleConnection extends React.Component<Props> {
 
   disconnect = () => {
     const identityProvider = this.state.identityProvider
-    const authIdentityProvider = this.props.auth.get('authUser').identityProvider
-    if (authIdentityProvider.id === identityProvider.id) {
-      this.props.showAlert('error', 'Can not remove active Identity Provider')
-      return
-    }
+    // const authIdentityProvider = this.props.authState.get('authUser').identityProvider
+    // if (authIdentityProvider.id === identityProvider.id) {
+    //   this.props.showAlert('error', 'Can not remove active Identity Provider')
+    //   return
+    // }
 
     this.props.removeConnection(identityProvider.id, this.state.userId)
   }
