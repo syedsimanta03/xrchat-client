@@ -10,12 +10,13 @@ import AccountBoxIcon from '@material-ui/icons/AccountBox'
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle'
 import UserProfile from './UserIcon'
 import UserSettings from './userSettings'
+import Subscription from './Subscription'
 import './style.scss'
 
 interface Props {
   open: boolean
   handleClose: any
-  avatar: any
+  avatarUrl: string,
   auth: any
 }
 
@@ -31,18 +32,6 @@ const useStyles = makeStyles((theme: Theme) =>
       border: '2px solid #000',
       boxShadow: theme.shadows[5],
       padding: theme.spacing(2, 4, 3)
-    },
-    subscriptionTitle: {
-      display: 'flex',
-      'justify-content': 'center',
-      'font-size': '2em',
-      'font-weight': 'bold'
-    },
-    subscriptionBody: {
-      display: 'flex',
-      'flex-direction': 'column',
-      'align-items': 'center',
-      'justify-content': 'center'
     }
   })
 )
@@ -60,7 +49,7 @@ const ProfileModal = (props: Props) => {
   }
   const avatar = (
     <TabPanel value={tabIndex} index={0}>
-      <UserProfile avatar={props.avatar} />
+      <UserProfile avatarUrl={props.avatarUrl} auth={props.auth} />
     </TabPanel>
   )
   const settings = (
@@ -75,14 +64,7 @@ const ProfileModal = (props: Props) => {
   )
   const subscription = (
     <TabPanel value={tabIndex} className="subscription-profile" index={3}>
-      <div className={classes.subscriptionTitle}>Your Subscription</div>
-      {authUser.subscription == null && <div className={classes.subscriptionBody}>Free Tier</div>}
-      {authUser.subscription != null &&
-        <div className={classes.subscriptionBody}>
-          <div>Plan: {authUser.subscription.subscriptionType.name}</div>
-          <div>Seats: {authUser.subscription.subscriptionType.seats}</div>
-        </div>
-      }
+      <Subscription auth={props.auth}/>
     </TabPanel>
   )
   return (
@@ -111,7 +93,7 @@ const ProfileModal = (props: Props) => {
             >
               <Tab
                 icon={<AccountCircleIcon style={{ fontSize: 15 }} />}
-                label="User Avatar"
+                label="Profile"
               />
               <Tab
                 icon={<SettingsIcon style={{ fontSize: 15 }} />}
