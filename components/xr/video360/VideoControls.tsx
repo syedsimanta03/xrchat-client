@@ -7,11 +7,12 @@ import { setVideoPlaying } from '../../../redux/video360/actions'
 import { selectVideo360State } from '../../../redux/video360/selector'
 
 type Props = {
-  videosrc: string
-  videotext: string
-  videovrui: string
-  setVideoPlaying: (playing: boolean) => void
-  playing: boolean
+  videosrc: string,
+  videotext: string,
+  videovrui: string,
+  setVideoPlaying: (playing: boolean) => void,
+  playing: boolean,
+  backButtonHref: string
 }
 type State = {
   end: boolean
@@ -140,25 +141,23 @@ class VideoControls extends Component<Props, State> {
   render() {
     return (
       <>
-        <div
-        onClick={this.clickHandler.bind(this)}
+        <div onClick={this.clickHandler.bind(this)}
           id="videoplayercontrols"
-          className="videoplayercontrols active"
-        />
+          className="videoplayercontrols active" />
         <VideoSeeker
-          backButtonHref="/explore"
+          backButtonHref={this.props.backButtonHref}
           playing={this.props.playing}
           videoLengthSeconds={this.state.duration}
           currentTimeSeconds={this.state.currentTime}
           bufferedBars={this.state.bufferedBars}
-          onTogglePlay={(playing) => {
+          onTogglePlay={playing => {
             if (playing) {
               this.playHandler()
             } else {
               this.pauseHandler()
             }
           }}
-          onSeekChange={(t) => {
+          onSeekChange={t => {
             (this.videoEl as HTMLVideoElement).currentTime = t
             this.setState({
               currentTime: t
