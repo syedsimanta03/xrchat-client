@@ -141,11 +141,12 @@ class VideoControls extends Component<Props, State> {
     return (
       <>
         <div
-          onClick={this.clickHandler.bind(this)}
+        onClick={this.clickHandler.bind(this)}
           id="videoplayercontrols"
           className="videoplayercontrols active"
         />
         <VideoSeeker
+          backButtonHref="/explore"
           playing={this.props.playing}
           videoLengthSeconds={this.state.duration}
           currentTimeSeconds={this.state.currentTime}
@@ -158,7 +159,7 @@ class VideoControls extends Component<Props, State> {
             }
           }}
           onSeekChange={(t) => {
-            ;(this.videoEl as HTMLVideoElement).currentTime = t
+            (this.videoEl as HTMLVideoElement).currentTime = t
             this.setState({
               currentTime: t
             })
