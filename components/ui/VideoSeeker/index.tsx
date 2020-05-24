@@ -2,6 +2,9 @@ import './style.scss'
 import { useState, useEffect } from 'react'
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import PauseIcon from '@material-ui/icons/Pause'
+import ArrowBackIcon from '@material-ui/icons/ArrowBack'
+import Link from 'next/link'
+import isExternalUrl from '../../../utils/isExternalUrl'
 
 type Props = {
   playing: boolean,
@@ -9,16 +12,19 @@ type Props = {
   onSeekChange?: (seekTimeSeconds: number) => void,
   videoLengthSeconds: number,
   currentTimeSeconds: number,
-  bufferedBars: Array<{start: number, end: number}>
+  bufferedBars: Array<{ start: number, end: number }>,
+  backButtonHref: string
 }
 
-const VideoSeeker = ({ playing, onTogglePlay, onSeekChange, videoLengthSeconds, currentTimeSeconds, bufferedBars }: Props) => {
+const VideoSeeker = ({ playing, onTogglePlay, onSeekChange, videoLengthSeconds, currentTimeSeconds, bufferedBars, backButtonHref }: Props) => {
   const [seekPercentage, setSeekPercentage] = useState(0)
 
   useEffect(() => {
     setSeekPercentage((currentTimeSeconds / videoLengthSeconds) * 100)
   }, [videoLengthSeconds, currentTimeSeconds])
-
+  const backButton = isExternalUrl(backButtonHref)
+    ? <a href={backButtonHref}><ArrowBackIcon style={{ color: 'white' }} /></a>
+    : <Link href={backButtonHref}><ArrowBackIcon style={{ color: 'white' }} /></Link>
   return (
     <div className="VideoSeeker">
       <div className="seek-bar-container">
@@ -45,7 +51,10 @@ const VideoSeeker = ({ playing, onTogglePlay, onSeekChange, videoLengthSeconds, 
           }
         }} />
       </div>
-      <div className="play-controls">
+      {!playing && (<div className="back-button-container video-control-button">
+        {backButton}
+      </div>)}
+      <div className="play-controls video-control-button">
         {
           playing ? <PauseIcon onClick={() => onTogglePlay(false)} style={{ color: 'white' }} />
             : <PlayArrowIcon onClick={() => onTogglePlay(true)} style={{ color: 'white' }} />

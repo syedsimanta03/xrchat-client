@@ -68,6 +68,7 @@ class VideoControls extends React.Component<Props, State> {
           className="videoplayercontrols active">
         </div>
         <VideoSeeker
+          backButtonHref="/explore"
           playing={this.props.playing}
           videoLengthSeconds={this.state.duration}
           currentTimeSeconds={this.state.currentTime}
