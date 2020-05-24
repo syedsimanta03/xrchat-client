@@ -12,6 +12,7 @@ import { shakaPropTypes } from './ShakaPlayerComp'
 import { selectAppState, selectInVrModeState } from '../../../redux/app/selector'
 import { selectVideo360State } from '../../../redux/video360/selector'
 import { setVideoPlaying } from '../../../redux/video360/actions'
+import isExternalUrl from '../../../utils/isExternalUrl'
 const THREE = AFRAME.THREE
 const ShakaPlayerComp = dynamic(() => import('./ShakaPlayerComp'), { ssr: false })
 
@@ -23,6 +24,7 @@ function getManifestUri(manifestPath: string): string {
   return AFRAME.utils.device.isIOS() ? manifestPath.replace(dashManifestName, hlsPlaylistName) : manifestPath
 }
 
+const backButtonHref = '/explore'
 const barHeight = 0.12
 
 const loader = new THREE.TextureLoader()
@@ -30,8 +32,10 @@ const loader = new THREE.TextureLoader()
 // currently CSS is using MUI icons, and VR is using images in public/icons/
 const playBtnImageSrc = '/icons/play.png'
 const pauseBtnImageSrc = '/icons/pause.png'
+const backBtnImageSrc = '/icons/back-btn.png'
 const playBtnImageMap = loader.load(playBtnImageSrc)
 const pauseBtnImageMap = loader.load(pauseBtnImageSrc)
+const backBtnImageMap = loader.load(backBtnImageSrc)
 const raycaster = new THREE.Raycaster()
 const mouse = new THREE.Vector2()
 const videoControlsPosition = {
@@ -179,12 +183,12 @@ function Video360Room() {
       i++
     }
   }
-  function createTimelineButton({ name, x, size }) {
+  function createTimelineButton({ name, x, size, map }) {
     const matButton = new THREE.MeshBasicMaterial({
       side: THREE.FrontSide,
       transparent: true,
       opacity: 0.8,
-      map: playing ? pauseBtnImageMap : playBtnImageMap
+      map
     })
 
     const geomButton = new THREE.PlaneBufferGeometry(size, size)
@@ -217,9 +221,6 @@ function Video360Room() {
   // set video duration and continuously update current time if the video is playing
   useEffect(() => {
     if (videoEl) {
-      if (timeline) {
-        timeline.button.material.map = playing ? pauseBtnImageMap : playBtnImageMap
-      }
       if (playing) {
         // get duration of video so we can render the seeker relative to this
         setDuration((videoEl as HTMLVideoElement).duration)
@@ -277,8 +278,10 @@ function Video360Room() {
       for (const prop in timeline) {
         timeline[prop].visible = inVrMode
       }
+      timeline.playPauseButton.material.map = playing ? pauseBtnImageMap : playBtnImageMap
+      timeline.backButton.visible = !playing && inVrMode
     }
-  }, [timeline, inVrMode])
+  }, [timeline, inVrMode, playing])
   // get whether video is playing or not from redux state
   useEffect(() => {
     setPlaying(video360State.get('playing'))
@@ -315,21 +318,33 @@ function Video360Room() {
       // position the current time bar slightly in front of full bar, so it's colour is not changed
       currentTimeBar.position.z += 0.0005
 
-      const timelineButton = createTimelineButton({
+      const playPauseButton = createTimelineButton({
         name: 'playPauseButton',
         size: 0.25,
-        x: fullBar.position.x - 0.2
+        x: fullBar.position.x - 0.2,
+        map: playing ? pauseBtnImageMap : playBtnImageMap
       })
+
+      const backButton = createTimelineButton({
+        name: 'backButton',
+        size: 0.25,
+        x: fullBar.position.x - 0.5,
+        map: backBtnImageMap
+      })
+
+      backButton.visible = !playing
 
       setTimeline(timeline => ({
         ...timeline,
         fullBar,
         currentTimeBar,
-        button: timelineButton
+        playPauseButton,
+        backButton
       }))
       videoCamera.setObject3D(fullBar.name, fullBar)
       videoCamera.setObject3D(currentTimeBar.name, currentTimeBar)
-      videoCamera.setObject3D(timelineButton.name, timelineButton)
+      videoCamera.setObject3D(playPauseButton.name, playPauseButton)
+      videoCamera.setObject3D(backButton.name, backButton)
     }
   }, [videoCamera, viewport])
   // update seeker bar
@@ -353,13 +368,13 @@ function Video360Room() {
     raycaster.setFromCamera(mouse, videoCamera.getObject3D('camera'))
 
     // calculate objects intersecting the picking ray
-    const intersects = raycaster.intersectObjects([timeline.fullBar, timeline.button])
+    const intersects = raycaster.intersectObjects([timeline.fullBar, timeline.playPauseButton, timeline.backButton])
     if (intersects.length) {
       // position along x axis between 0 and 1, where the click was made.
       // used for setting the video seeker position
       const timelineIntersection = intersects.find(({ object: { name } }) => name === 'fullBarTimeline')
       const playPauseBtnIntersection = intersects.find(({ object: { name } }) => name === 'playPauseButton')
-
+      const backButtonIntersection = intersects.find(({ object: { name } }) => name === 'backButton')
       if (timelineIntersection) {
         const t = timelineIntersection.uv.x
         // set video element current time
@@ -370,6 +385,13 @@ function Video360Room() {
       }
       if (playPauseBtnIntersection) {
         dispatch(setVideoPlaying(!playing))
+      }
+      if (backButtonIntersection) {
+        if (isExternalUrl(backButtonHref)) {
+          window.location.href = backButtonHref
+        } else {
+          router.push(backButtonHref)
+        }
       }
     }
   }
@@ -401,7 +423,7 @@ function Video360Room() {
         position={{ x: 0, y: 0.98, z: -0.9 }}
       /> */}
       <VideoControls
-        videosrc="#video360Shaka" videotext="#videotext" videovrui="#video-player-vr-ui" />
+        videosrc="#video360Shaka" videotext="#videotext" videovrui="#video-player-vr-ui" backButtonHref={backButtonHref} />
       <Entity id="videotext"
         text={{
           font: 'roboto',
