@@ -12,6 +12,7 @@ import { selectVideo360State } from '../../../redux/video360/selector'
 import { setVideoPlaying } from '../../../redux/video360/actions'
 import { shakaPropTypes } from './ShakaPlayer'
 import isExternalUrl from '../../../utils/isExternalUrl'
+import { setAppInVrMode } from '../../../redux/app/actions'
 const THREE = AFRAME.THREE
 const ShakaPlayer = dynamic(() => import('./ShakaPlayer'), { ssr: false })
 
@@ -66,6 +67,7 @@ function Video360Room() {
   const videosrc = '#video360Shaka'
   const app = useSelector(state => selectAppState(state))
   const inVrMode = useSelector(state => selectInVrModeState(state))
+  const setInVrMode = inVrMode => dispatch(setAppInVrMode(inVrMode))
   const dispatch = useDispatch()
   const [videoEl, setVideoEl] = useState(null)
   const [viewport, setViewport] = useState(app.get('viewport'))
@@ -346,6 +348,8 @@ function Video360Room() {
         dispatch(setVideoPlaying(!playing))
       }
       if (backButtonIntersection) {
+        // vr mode exits on navigation but doesn't trigger exit-vr event handler so have to set it here
+        setInVrMode(false)
         if (isExternalUrl(backButtonHref)) {
           window.location.href = backButtonHref
         } else {
